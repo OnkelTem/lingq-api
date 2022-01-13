@@ -1,0 +1,11 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npx js-yaml lingq-api.yaml > lingq-api.openapi.tmp.json
+if ! diff lingq-api.openapi.json lingq-api.openapi.tmp.json > /dev/null 2>&1; then
+  rm lingq-api.openapi.tmp.json
+  echo "Did you run 'npm run build'?"
+  exit 1
+else
+  rm lingq-api.openapi.tmp.json
+fi

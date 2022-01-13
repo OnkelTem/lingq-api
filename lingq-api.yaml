@@ -1,0 +1,474 @@
+x-responses:
+  StdResponse: &StdResponse
+    200: &StdResponse200
+      description: Successful operation
+    401:
+      $ref: '#/components/responses/Unauthorized'
+    default:
+      $ref: '#/components/responses/Error'
+x-types:
+  - &int { type: integer }
+  - &intQ { type: integer, nullable: true }
+  - &str { type: string }
+  - &strA { type: array, items: { type: string } }
+  - &strQ { type: string, nullable: true }
+  - &num { type: number }
+  - &numQ { type: number, nullable: true }
+  - &bool { type: boolean }
+  - &boolQ { type: boolean, nullable: true }
+  - &datetime { type: string, format: date-time }
+  - &datetimeQ { type: string, format: date-time, nullable: true }
+openapi: 3.0.0
+
+info:
+  title: Lingq.com API
+  description: HTTP API for lingq.com
+  version: 0.0.1
+
+servers:
+  - url: https://www.lingq.com/api/v2
+    description: Official lingq.com API
+paths:
+  /{lang}/collections/{id}:
+    get:
+      summary: Get collection data
+      operationId: langCollectionsIdGet
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: lang
+          in: path
+          required: true
+          schema: *str
+        - name: id
+          in: path
+          required: true
+          schema: *int
+      responses:
+        <<: *StdResponse
+        200:
+          <<: *StdResponse200
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Collection' }
+
+  /{lang}/lessons/{id}:
+    get:
+      summary: Get lessson data
+      operationId: langLessonsIdGet
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: lang
+          in: path
+          required: true
+          schema: *str
+        - name: id
+          in: path
+          required: true
+          schema: *int
+      responses:
+        <<: *StdResponse
+        200:
+          <<: *StdResponse200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+
+components:
+  responses:
+    Unauthorized:
+      description: Access token is missing or invalid
+    Error:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+
+  schemas:
+    CollectionTeaser:
+      type: object
+      required:
+        - pk
+        - url
+        - title
+        - description
+        - audio
+        - image
+        - imageUrl
+        - originalImageUrl
+        - completedRatio
+        - completedTimes
+        - lessonsCount
+        - newWordsCount
+        - difficulty
+        - level
+        - price
+        - provider
+        - providerImageUrl
+        - sharedByName
+        - sharedByImageUrl
+        - sourceURLEnabled
+        - sourceURL
+        - tags
+        - external_type
+        - rosesCount
+        - roseGiven
+        - type
+      properties:
+        pk: *int
+        url: *str
+        title: *str
+        description: *str
+        audio: *strQ
+        image: *str
+        imageUrl: *str
+        originalImageUrl: *str
+        completedRatio: *num
+        completedTimes: *int
+        lessonsCount: *int
+        newWordsCount: *int
+        difficulty: *num
+        level: *str
+        price: *num
+        provider: *str
+        providerImageUrl: *str
+        sharedByName: *str
+        sharedByImageUrl: *str
+        sourceURLEnabled: *boolQ
+        sourceURL: *strQ
+        tags: *str
+        external_type: *strQ
+        rosesCount: *int
+        roseGiven: *bool
+        # TODO: type.enum
+        type: { type: string, enum: ['collection'] }
+
+    Collection:
+      allOf:
+        - $ref: '#/components/schemas/CollectionTeaser'
+        - type: object
+          required:
+            - lessons
+          properties:
+            lessons:
+              type: array
+              items: { $ref: '#/components/schemas/LessonTeaser' }
+
+    LessonTeaser:
+      type: object
+      required:
+        - id
+        - contentId
+        - collectionId
+        - collectionTitle
+        - url
+        - originalUrl
+        - imageUrl
+        - originalImageUrl
+        - providerImageUrl
+        - title
+        - description
+        - duration
+        - audio
+        - audioPending
+        - pubDate
+        - sharedDate
+        - sharedByName
+        - giveRoseUrl
+        - wordCount
+        - uniqueWordCount
+        - external_type
+        - type
+        - status
+        - pos
+        - price
+        - opened
+        - completed
+        - percentCompleted
+        - newWordsCount
+        - difficulty
+        - providerName
+        - providerDescription
+        - lastRoseReceived
+        - lessonRating
+        - lessonVotes
+        - audioRating
+        - audioVotes
+        - rosesCount
+        - isFavorite
+        - isOverLimit
+        - level
+        - tags
+        - providerUrl
+        - readTimes
+        - listenTimes
+        - roseGiven
+        - openDate
+        - viewsCount
+        - isProtected
+      properties:
+        id: *int
+        contentId: *int
+        collectionId: *int
+        collectionTitle: *str
+        url: *str
+        originalUrl: *strQ
+        imageUrl: *str
+        originalImageUrl: *str
+        providerImageUrl: *str
+        title: *str
+        description: *str
+        duration: *num
+        audio: *str
+        audioPending: *bool
+        pubDate: *datetime
+        sharedDate: *datetimeQ
+        sharedByName: *str
+        giveRoseUrl: *str
+        wordCount: *int
+        uniqueWordCount: *int
+        external_type: *strQ
+        # TODO: type.enum
+        type: { type: string, enum: ['lesson'] }
+        status: *str
+        pos: *num
+        price: *num
+        opened: *bool
+        completed: *bool
+        percentCompleted: *num
+        newWordsCount: *int
+        difficulty: *num
+        providerName: *str
+        providerDescription: *str
+        lastRoseReceived: *datetime
+        lessonRating: *num
+        lessonVotes: *int
+        audioRating: *num
+        audioVotes: *int
+        rosesCount: *int
+        isFavorite: *bool
+        isOverLimit: *boolQ
+        level: *str
+        tags: *strA
+        providerUrl: *str
+        readTimes: *num
+        listenTimes: *num
+        roseGiven: *bool
+        openDate: *datetime
+        viewsCount: *int
+        isProtected: *intQ
+
+    Lesson:
+      allOf:
+        - $ref: '#/components/schemas/LessonTeaser'
+        - type: object
+          required:
+            - notes
+            - collection
+            - tokenizedText
+            - classicUrl
+            - timestamp ?
+            - sharedByImageUrl
+            - sharedByIsFriend
+            - promotedCourse
+            - printUrl
+            - canEdit
+            - canEditSentence
+            - nextLessonId
+            - previousLessonId
+            - videoUrl
+            - cardsCount
+            - bookmark
+            - isLegacy
+            - cards
+            - words
+          properties:
+            notes: *strQ
+            collection: { $ref: '#/components/schemas/CollectionTeaser' }
+            tokenizedText:
+              type: array
+              items: { $ref: '#/components/schemas/TokenizedTextGroup' }
+            classicUrl: *str
+            sharedByImageUrl: *str
+            sharedByIsFriend: *bool
+            promotedCourse: *boolQ
+            printUrl: *str
+            canEdit: *bool
+            canEditSentence: *bool
+            nextLessonId: *intQ
+            previousLessonId: *intQ
+            # TODO: transliteration
+            # TODO: altScript
+            # TODO: exercises
+            videoUrl: *strQ
+            # TODO: translation
+            cardsCount: *int
+            bookmark: { $ref: '#/components/schemas/Bookmark' }
+            isLegacy: *bool
+            words:
+              type: object
+              additionalProperties: { $ref: '#/components/schemas/Word' }
+            cards:
+              type: object
+              additionalProperties: { $ref: '#/components/schemas/Card' }
+
+    Bookmark:
+      type: object
+        - wordIndex
+        - completedWordIndex
+        - audioPosition
+        - client
+        - timestamp
+        - languageTimestamp
+      properties:
+        wordIndex: *int
+        completedWordIndex: *intQ
+        audioPosition: *numQ
+        # TODO: client.enum
+        client: { type: string, enum: ['web'] }
+        timestamp: *datetime
+        languageTimestamp: *datetime
+
+    Card:
+      type: object
+      required:
+        - pk
+        - status
+        # Can be missed
+        # - tags
+        - importance
+        - extended_status
+        - words
+        - altScript
+        - hints
+        - term
+        - srs_due_date
+        - notes
+        - fragment
+      properties:
+        pk: *int
+        status: *int
+        tags: *strA
+        importance: *int
+        extended_status: *intQ
+        words: *strA
+        # TODO: altScript
+        hints: { type: array, items: { $ref: '#/components/schemas/CardsHint' } }
+        term: *str
+        # TODO: translation
+        srs_due_date: *datetime
+        notes: *str
+        fragment: *str
+
+    CardsHint:
+      type: object
+      required:
+        - id
+        - flagged
+        - locale
+        - term_id
+        - is_google_translate
+        - popularity
+        - approved
+        - detected_locale
+        - creator_id
+        - text
+        - word_id
+      properties:
+        id: *int
+        flagged: *bool
+        locale: *str
+        term_id: *int
+        is_google_translate: *bool
+        popularity: *int
+        approved: *bool
+        detected_locale: *strQ
+        creator_id: *intQ
+        text: *str
+        word_id: *int
+
+    Word:
+      type: object
+      required:
+        - importance
+        - text
+        - status
+        # Can be missed
+        # - hints
+        - tags
+      properties:
+        importance: *int
+        text: *str
+        # TODO: status.enum
+        status: { type: string, enum: ['known', 'card'] }
+        hints: { type: array, items: { $ref: '#/components/schemas/WordHint' } }
+        tags: *strA
+
+    WordHint:
+      type: object
+      required:
+        - id
+        - locale
+        - flagged
+        - text
+        - is_google_translate
+        - popularity
+      properties:
+        id: *int
+        locale: *str
+        flagged: *bool
+        text: *str
+        is_google_translate: *bool
+        popularity: *int
+
+    TokenizedTextGroup:
+      type: array
+      items: { $ref: '#/components/schemas/TokenizedTextItem' }
+
+    TokenizedTextItem:
+      type: object
+      required:
+        - index
+        - timestamp
+        - text
+        - tokens
+        - normalizedText
+      properties:
+        index: *int
+        timestamp: *datetime
+        text: *str
+        tokens: { type: array, items: { $ref: '#/components/schemas/Token' } }
+        normalizedText: *str
+
+    Token:
+      type: object
+      required:
+        - index
+        - text
+        - indexInSentence
+        - wordId
+      properties:
+        index: *int
+        text: *str
+        indexInSentence: *int
+        wordId: *int
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string

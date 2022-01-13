@@ -1,0 +1,30 @@
+{
+  "name": "lingq-api",
+  "version": "2.0.0",
+  "description": "Lingq.com API",
+  "keywords": [
+    "Lingq",
+    "Lingq API",
+    "Lingq.com"
+  ],
+  "license": "LGPL-3.0-or-later",
+  "author": {
+    "name": "OnkelTem",
+    "email": "aneganov@gmail.com"
+  },
+  "bin": "bin/lingq-dl",
+  "scripts": {
+    "build": "js-yaml lingq-api.yaml > lingq-api.openapi.json",
+    "prepare": "husky install",
+    "release": "standard-version",
+    "test": "openapi-generator-cli validate -i lingq-api.openapi.json"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.4.21",
+    "husky": "^6.0.0",
+    "js-yaml": "^4.1.0",
+    "prettier": "^2.3.2",
+    "rimraf": "^3.0.2",
+    "standard-version": "^9.3.0"
+  }
+}

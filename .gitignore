@@ -1,0 +1,10 @@
+/*
+!/.husky
+!/.gitignore
+!/lingq-api.yaml
+!/lingq-api.openapi.json
+!/openapitools.json
+!/package.json
+!/package-lock.json
+!/README.md
+!/.prettierrc
